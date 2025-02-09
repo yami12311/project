@@ -1,50 +1,4 @@
-<?php
-session_start();
-include('db_config.php');
 
-if (!isset($_SESSION['admin_id'])) {
-    header('Location: login.php');
-    exit;
-}
-
-if (!isset($_GET['id'])) {
-    die("Employee ID not provided.");
-}
-
-$employee_id = $_GET['id'];
-
-// Fetch employee details
-$query = "SELECT * FROM employees WHERE employee_id = ?";
-$stmt = $conn->prepare($query);
-$stmt->bind_param("i", $employee_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$employee = $result->fetch_assoc();
-
-if (!$employee) {
-    die("Employee not found.");
-}
-
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $department = $_POST['department'];
-    $position = $_POST['position'];
-    $salary = $_POST['salary'];
-    $join_date = $_POST['join_date'];
-
-    $updateQuery = "UPDATE employees SET username=?, email=?, department=?, position=?, salary=?, join_date=? WHERE employee_id=?";
-    $updateStmt = $conn->prepare($updateQuery);
-    $updateStmt->bind_param("ssssssi", $username, $email, $department, $position, $salary, $join_date, $employee_id);
-    
-    if ($updateStmt->execute()) {
-        echo "<script>alert('Employee updated successfully!'); window.location.href='dashboard.php';</script>";
-    } else {
-        echo "<script>alert('Error updating employee.');</script>";
-    }
-}
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -53,6 +7,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Employee</title>
     <link rel="stylesheet" href="edit.css">
+       <!-- Bootstrap CSS -->
+       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
     <div class="dashboard-container">
@@ -62,28 +20,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </header>
 
         <main class="content">
-            <form method="POST">
-                <label>Username:</label>
-                <input type="text" name="username" value="<?php echo $employee['username']; ?>" required>
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label"><i class="fas fa-user icon"></i> Username:</label>
+            <input type="text" name="username" class="form-control" value="<?php echo $employee['username']; ?>" required>
+        </div>
 
-                <label>Email:</label>
-                <input type="email" name="email" value="<?php echo $employee['email']; ?>" required>
+        <div class="mb-3">
+            <label class="form-label"><i class="fas fa-envelope icon"></i> Email:</label>
+            <input type="email" name="email" class="form-control" value="<?php echo $employee['email']; ?>" required>
+        </div>
 
-                <label>Department:</label>
-                <input type="text" name="department" value="<?php echo $employee['department']; ?>" required>
+        <div class="mb-3">
+            <label class="form-label"><i class="fas fa-building icon"></i> Department:</label>
+            <input type="text" name="department" class="form-control" value="<?php echo $employee['department']; ?>" required>
+        </div>
 
-                <label>Position:</label>
-                <input type="text" name="position" value="<?php echo $employee['position']; ?>" required>
+        <div class="mb-3">
+            <label class="form-label"><i class="fas fa-briefcase icon"></i> Position:</label>
+            <input type="text" name="position" class="form-control" value="<?php echo $employee['position']; ?>" required>
+        </div>
 
-                <label>Salary:</label>
-                <input type="number" name="salary" value="<?php echo $employee['salary']; ?>" required>
+        <div class="mb-3">
+            <label class="form-label"><i class="fas fa-dollar-sign icon"></i> Salary:</label>
+            <input type="number" name="salary" class="form-control" value="<?php echo $employee['salary']; ?>" required>
+        </div>
 
-                <label>Join Date:</label>
-                <input type="date" name="join_date" value="<?php echo $employee['join_date']; ?>" required>
+        <div class="mb-3">
+            <label class="form-label"><i class="fas fa-calendar icon"></i> Join Date:</label>
+            <input type="date" name="join_date" class="form-control" value="<?php echo $employee['join_date']; ?>" required>
+        </div>
 
-                <button type="submit">Update Employee</button>
-            </form>
-        </main>
+        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Update Employee</button>
+    </form>
+</main>
+
     </div>
 </body>
 </html>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
